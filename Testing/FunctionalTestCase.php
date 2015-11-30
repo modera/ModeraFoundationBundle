@@ -4,6 +4,7 @@ namespace Modera\FoundationBundle\Testing;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Security\Core\SecurityContextInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * A base test case that you may extend when writing your functional tests, it allows you
@@ -23,6 +24,15 @@ use Symfony\Component\Security\Core\SecurityContextInterface;
  */
 class FunctionalTestCase extends WebTestCase
 {
+    /**
+     * Here we store current test or its child kernel.
+     *
+     * static::$kernel (that exists in parent) will be overridden by static::createClient() call
+     *
+     * @var KernelInterface
+     */
+    static protected $mainKernel;
+
     const IM_METHOD = 'method';
     const IM_CLASS = 'class';
 
@@ -52,9 +62,9 @@ class FunctionalTestCase extends WebTestCase
      */
     final static public function setUpBeforeClass()
     {
-        static::$kernel = static::createKernel();
-        static::$kernel->boot();
-        static::$container = static::$kernel->getContainer();
+        static::$mainKernel = static::createKernel();
+        static::$mainKernel->boot();
+        static::$container = static::$mainKernel->getContainer();
 
         if (self::emExists()) {
             static::$em = static::$container->get('doctrine.orm.entity_manager');
