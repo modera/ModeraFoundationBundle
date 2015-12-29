@@ -57,6 +57,9 @@ class FunctionalTestCase extends WebTestCase
 
     static public function setUpBeforeClass()
     {
+        // Backward compatibility adding
+        static::initSymfony();
+
         if (static::getIsolationLevel() == self::IM_CLASS) {
             static::init();
         }
@@ -217,14 +220,8 @@ class FunctionalTestCase extends WebTestCase
         }
     }
 
-    /**
-     *
-     */
-    static protected function init()
+    static protected function initSymfony()
     {
-
-        static::preInit();
-
         static::$client = static::createClient();
 
         static::$container = static::$kernel->getContainer();
@@ -232,8 +229,18 @@ class FunctionalTestCase extends WebTestCase
         if (self::emExists()) {
             static::$em = static::$container->get('doctrine.orm.entity_manager');
         }
+    }
 
-        static::$st = new SchemaTool(self::$em);
+    /**
+     * Main before test/Class init method
+     */
+    static protected function init()
+    {
+        static::preInit();
+
+        static::initSymfony();
+
+        static::$st = new SchemaTool(static::$em);
 
         static::makeDatabaseCreateDecision();
         static::clearTables(static::getDatabaseTableList());

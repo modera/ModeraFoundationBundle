@@ -1,6 +1,7 @@
 <?php
 namespace Modera\FoundationBundle\Testing;
 
+use Modera\SecurityBundle\Entity\User;
 /**
  * @author    Alex Plaksin <alex.plaksin@modera.net>
  * @copyright 2015 Modera Foundation
@@ -41,5 +42,23 @@ trait ExtDirectClientTrait
 
         return $returnArray;
 
+    }
+
+    /**
+     * Helper method for retrieving auth header used by firewall to authentifcate user against Direct routing
+     *
+     * @param User $user
+     *
+     * @return array
+     */
+    static protected function getDirectAuthHeaders(User $user, $password= '1234')
+    {
+
+        return array(
+            'CONTENT_TYPE'          => 'application/json',
+            'HTTP_X-Requested-With' => 'XMLHttpRequest',
+            'PHP_AUTH_USER' => $user->getUsername(),
+            'PHP_AUTH_PW'   => $password,
+        );
     }
 }
