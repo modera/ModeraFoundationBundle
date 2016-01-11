@@ -3,6 +3,7 @@
 namespace Modera\FoundationBundle\Tests\Unit\Testing;
 
 use Modera\FoundationBundle\Testing\FixturesCreator;
+
 /**
  * @author    Alex Plaksin <alex.plaksin@modera.net>
  * @copyright 2015 Modera Foundation

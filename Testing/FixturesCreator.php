@@ -1,8 +1,9 @@
 <?php
+
 namespace Modera\FoundationBundle\Testing;
 
 /**
- * Create fixture with all non relations field filled
+ * Create fixture with all non relations field filled.
  *
  * @author    Alex Plaksin <alex.plaksin@modera.net>
  * @copyright 2015 Modera Foundation
@@ -10,7 +11,7 @@ namespace Modera\FoundationBundle\Testing;
 class FixturesCreator
 {
     /**
-     * Create Class instance from given FQDN entity name
+     * Create Class instance from given FQDN entity name.
      *
      * 1. Check if class is ORM\Entity
      * 2. Get non relation fields list if setter exists
@@ -22,7 +23,7 @@ class FixturesCreator
      *
      * @return mixed
      */
-    static function createFixture($className, $index=1)
+    public static function createFixture($className, $index = 1)
     {
         if (!class_exists($className)) {
             throw new \InvalidArgumentException(sprintf('No such(%) class name ', $className));
@@ -31,7 +32,7 @@ class FixturesCreator
         $reflectionClass = new \ReflectionClass($className);
         $docComment = $reflectionClass->getDocComment();
 
-        /**
+        /*
          * if class docComment has
          * @ORM\Entity and @ORM\Table doc blocks all is ok
          */
@@ -42,27 +43,27 @@ class FixturesCreator
         /* @var string[] */;
         $propertyNames = [];
 
-        /**
+        /*
          * Grabbing all class properties that have @ORM\Column in docComment
          */
-        foreach($reflectionClass->getProperties() as $property) {
-            if(preg_match('/@ORM\\\Column/', $property->getDocComment())) {
-                if ($reflectionClass->hasMethod(static::getSetterName($property->getName())) ) {
+        foreach ($reflectionClass->getProperties() as $property) {
+            if (preg_match('/@ORM\\\Column/', $property->getDocComment())) {
+                if ($reflectionClass->hasMethod(static::getSetterName($property->getName()))) {
                     $propertyNames[] = $property->getName();
                 }
             }
         }
 
         $resultClass = new $className();
-        foreach($propertyNames as $propertyName) {
+        foreach ($propertyNames as $propertyName) {
             $resultClass->{static::getSetterName($propertyName)}($propertyName.$index);
         }
 
         return $resultClass;
     }
 
-    static protected function getSetterName($propertyName)
+    protected static function getSetterName($propertyName)
     {
-        return 'set'. ucfirst($propertyName);
+        return 'set'.ucfirst($propertyName);
     }
 }

@@ -14,7 +14,7 @@ class ExtensionTest extends \PHPUnit_Framework_TestCase
     private $ext;
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function setUp()
     {
@@ -63,7 +63,5 @@ JSON;
 JSON;
 
         $this->assertEquals($expectedOutput, $this->ext->filter_prepend_every_line($input, 4, ' ', true));
-
-
     }
 }

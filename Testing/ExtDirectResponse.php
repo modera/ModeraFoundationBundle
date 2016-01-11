@@ -1,4 +1,5 @@
 <?php
+
 namespace Modera\FoundationBundle\Testing;
 
 use Symfony\Component\HttpFoundation\Response;
@@ -9,7 +10,6 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * Helper class to wrap ExtDirect json response
  */
-
 class ExtDirectResponse
 {
     const STATUS_SUCCESS = 'success';
@@ -33,7 +33,7 @@ class ExtDirectResponse
     /**
      * @var bool
      */
-    private $isSuccessful;
+    private $isSuccessful = false;
 
     /**
      * @var array
@@ -42,9 +42,9 @@ class ExtDirectResponse
 
     private $exception;
 
-
-    public function __construct($response, $statusCode=200)
+    public function __construct($response, $statusCode = 200)
     {
+        $this->items = [];
         if (array_key_exists('result', $response)) {
             $this->response = $response['result'];
             $this->status = self::STATUS_SUCCESS;
@@ -59,15 +59,27 @@ class ExtDirectResponse
     public function parse()
     {
         if ($this->status == self::STATUS_SUCCESS) {
-            $this->isSuccessful = $this->response['success'];
-            if ($this->isSuccessful) {
+            if (array_key_exists('items', $this->response)) {
                 $this->items = $this->response['items'];
-            } else {
-
             }
         } elseif ($this->status == self::STATUS_EXCEPTION) {
             $this->isSuccessful = false;
         }
+    }
+
+    public function getFullResponse()
+    {
+        return $this->response;
+    }
+
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    public function getException()
+    {
+        return $this->exception;
     }
 
     /**
@@ -83,7 +95,11 @@ class ExtDirectResponse
      */
     public function isSuccessful()
     {
-        return $this->isSuccessful;
+        if ($this->status == self::STATUS_SUCCESS) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -93,5 +109,4 @@ class ExtDirectResponse
     {
         return $this->items;
     }
-
 }

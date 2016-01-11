@@ -15,7 +15,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class FunctionalTestCase extends WebTestCase
 {
-
     const IM_METHOD = 'method';
     const IM_CLASS = 'class';
 
@@ -26,36 +25,36 @@ class FunctionalTestCase extends WebTestCase
      *
      * @var bool
      */
-    static public $keepDatabase = false;
+    public static $keepDatabase = false;
 
     /**
      * Tests will use transactions to aviod database clearance.
      *
      * @var bool
      */
-    static public $useTransaction = true;
+    public static $useTransaction = true;
 
     /**
      * @var Client
      */
-    static protected $client;
+    protected static $client;
 
     /**
      * @var ContainerInterface
      */
-    static protected $container;
+    protected static $container;
 
     /**
      * @var EntityManager
      */
-    static protected $em;
+    protected static $em;
 
     /**
      * @var SchemaTool
      */
-    static protected $st;
+    protected static $st;
 
-    static public function setUpBeforeClass()
+    public static function setUpBeforeClass()
     {
         // Backward compatibility adding
         static::initSymfony();
@@ -84,16 +83,16 @@ class FunctionalTestCase extends WebTestCase
         $this->doTearDown();
     }
 
-    static public function tearDownAfterClass()
+    public static function tearDownAfterClass()
     {
+        static::doTearDownAfterClass();
+
         if (static::getIsolationLevel() == self::IM_CLASS) {
             static::clear();
         }
-
-        static::doTearDownAfterClass();
     }
 
-    static function clear()
+    public static function clear()
     {
         static::preClear();
         if (static::$keepDatabase) {
@@ -123,7 +122,7 @@ class FunctionalTestCase extends WebTestCase
      *
      * @param ClassMetadata[] $entitiesMetadata
      */
-    static protected function createTables(array $entitiesMetadata)
+    protected static function createTables(array $entitiesMetadata)
     {
         static::$st->createSchema($entitiesMetadata);
     }
@@ -133,41 +132,41 @@ class FunctionalTestCase extends WebTestCase
      *
      * @param ClassMetadata[] $entitiesMetadata
      */
-    static protected function dropTables(array $entitiesMetadata)
+    protected static function dropTables(array $entitiesMetadata)
     {
         static::$st->dropSchema($entitiesMetadata);
     }
 
     /**
-     * Methods return all tables metadata that used in this test and its children
+     * Methods return all tables metadata that used in this test and its children.
      *
      * Template method.
      * Update this list if you need to add/remove db tables for this tests.
      *
      * @return ClassMetadata[]
      */
-    static protected function getDatabaseTableList()
+    protected static function getDatabaseTableList()
     {
         return [];
     }
 
     /**
-     * Get this test tables names
+     * Get this test tables names.
      *
      * @return string[]
      */
-    static protected function getDatabaseTableListNames()
+    protected static function getDatabaseTableListNames()
     {
         $dbNames = [];
 
-        foreach(static::getDatabaseTableList() as $classMetaData) {
+        foreach (static::getDatabaseTableList() as $classMetaData) {
             $dbNames[] = $classMetaData->getTableName();
         }
 
         return $dbNames;
     }
 
-    static protected function emExists()
+    protected static function emExists()
     {
         return static::$container->has('doctrine.orm.entity_manager');
     }
@@ -177,12 +176,12 @@ class FunctionalTestCase extends WebTestCase
      *
      * @return string
      */
-    static protected function getIsolationLevel()
+    protected static function getIsolationLevel()
     {
         return self::IM_METHOD;
     }
 
-    static protected function rollbackTransaction()
+    protected static function rollbackTransaction()
     {
         if (static::$container && static::emExists()) {
             $c = static::$em->getConnection();
@@ -191,36 +190,38 @@ class FunctionalTestCase extends WebTestCase
             // even if they don't use EM
             if ($c->isTransactionActive()) {
                 $c->rollback();
-            }}
+            }
+        }
     }
 
     /**
      * Check if database exists.
      *
-     * @return boolean
+     * @return bool
      */
-    static protected function doDatabaseTablesExists()
+    protected static function doDatabaseTablesExists()
     {
         $schemaManager = self::$em->getConnection()->getSchemaManager();
+
         return $schemaManager->tablesExist(self::getDatabaseTableListNames());
     }
 
-    static protected function makeDatabaseCreateDecision()
+    protected static function makeDatabaseCreateDecision()
     {
-        if ( !(static::doDatabaseTablesExists() == true && static::$keepDatabase) ) {
+        if (!(static::doDatabaseTablesExists() == true && static::$keepDatabase)) {
             static::dropTables(static::getDatabaseTableList());
             static::createTables(static::getDatabaseTableList());
         }
     }
 
-    static protected function makeTransactionStartDecision()
+    protected static function makeTransactionStartDecision()
     {
         if (static::$useTransaction) {
             static::$em->getConnection()->beginTransaction();
         }
     }
 
-    static protected function initSymfony()
+    protected static function initSymfony()
     {
         static::$client = static::createClient();
 
@@ -232,9 +233,9 @@ class FunctionalTestCase extends WebTestCase
     }
 
     /**
-     * Main before test/Class init method
+     * Main before test/Class init method.
      */
-    static protected function init()
+    protected static function init()
     {
         static::preInit();
 
@@ -254,71 +255,89 @@ class FunctionalTestCase extends WebTestCase
      *
      * If you need to execute any actions before static::init()
      */
-    static protected function preInit() {}
+    protected static function preInit()
+    {
+    }
 
     /**
      * Template method.
      *
      * If you need to execute any actions after static::init()
      */
-    static protected function postInit() {}
+    protected static function postInit()
+    {
+    }
 
     /**
      * Template method.
      *
      * If you need to execute something before clearing/deleting tables
      */
-    static protected function preClear() {}
+    protected static function preClear()
+    {
+    }
 
     /**
      * Template method.
      *
      * If you need to execute something after clearing/deleting tables
      */
-    static protected function postClear() {}
+    protected static function postClear()
+    {
+    }
 
     /**
-     * Template method to implement preClearTables
+     * Template method to implement preClearTables.
      */
-    static protected function preClearTables() {}
+    protected static function preClearTables()
+    {
+    }
 
     /**
-     * Template method that executed after static::setUpBeforeClass
+     * Template method that executed after static::setUpBeforeClass.
      */
-    static public function doSetupBeforeClass() {}
+    public static function doSetupBeforeClass()
+    {
+    }
 
     /**
-     * Template method that executed after static::tearDownAfterClass
+     * Template method that executed after static::tearDownAfterClass.
      */
-    static public function doTearDownAfterClass() {}
+    public static function doTearDownAfterClass()
+    {
+    }
 
     /**
-     * Template method that executed after $this->setUp
+     * Template method that executed after $this->setUp.
      */
-    public function doSetUp() {}
+    public function doSetUp()
+    {
+    }
 
     /**
-     * Template method that executed after $this->tearDown
+     * Template method that executed after $this->tearDown.
      */
-    public function doTearDown() {}
+    public function doTearDown()
+    {
+    }
 
     /**
      * Delete all data from tables.
      *
      * @param ClassMetadata[] $entitiesMetadata
      */
-    static protected function clearTables(array $entitiesMetadata)
+    protected static function clearTables(array $entitiesMetadata)
     {
         static::preClearTables();
         foreach ($entitiesMetadata as $entityMetadata) {
-            /** var ClassMetadata $classMetaData */
-            $query = static::$em->createQuery("DELETE FROM ". $entityMetadata->rootEntityName);
+            /* var ClassMetadata $classMetaData */
+            $query = static::$em->createQuery('DELETE FROM '.$entityMetadata->rootEntityName);
             $query->execute();
         }
     }
 
     /**
-     * Overide of create client from WebTestCase
+     * Overide of create client from WebTestCase.
      *
      * Main thing is that static::bootKernel will create new kernel in static::$kernel
      * So all that depeneds on static::$kernel will start depends on new version of kernel

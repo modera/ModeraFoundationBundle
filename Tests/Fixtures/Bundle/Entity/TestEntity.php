@@ -1,7 +1,9 @@
 <?php
+
 namespace Modera\FoundationBundle\Tests\Fixtures\Bundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+
 /**
  * @author    Alex Plaksin <alex.plaksin@modera.net>
  * @copyright 2015 Modera Foundation
